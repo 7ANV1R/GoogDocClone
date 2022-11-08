@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:googdocc/screens/auth/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,11 +11,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Goog Docc',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
       ),
-      home: Container(),
+      home: const LoginPage(),
     );
   }
 }

@@ -1,15 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:googdocc/repository/auth_repository.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
 
+  void signInWithGoogle(WidgetRef ref) {
+    ref.read(authRepoProvider).signInWithGoogle();
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Center(
         child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () => signInWithGoogle(ref),
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(230, 56),
           ),

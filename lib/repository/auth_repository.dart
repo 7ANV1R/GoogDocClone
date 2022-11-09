@@ -44,6 +44,7 @@ class AuthRepository {
 
         switch (response.statusCode) {
           case 200:
+            log(jsonDecode(response.body));
             final newUser = userAcc.copyWith(uid: jsonDecode(response.body)['users']['_id']);
             error = ErrorModel(error: null, data: newUser);
             break;
@@ -52,7 +53,7 @@ class AuthRepository {
         log('not found');
       }
     } catch (e) {
-      log(e.toString());
+      error = ErrorModel(error: e.toString(), data: null);
     }
     return error;
   }

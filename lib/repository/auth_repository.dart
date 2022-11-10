@@ -30,29 +30,33 @@ class AuthRepository {
         _client = client;
 
   Future<ErrorModel> signInWithGoogle() async {
-    ErrorModel error = ErrorModel(error: 'Some Error', data: null);
+    ErrorModel error = ErrorModel(error: 'Some unexpected error occurred.', data: null);
 
     try {
       final user = await _googleSignIn.signIn();
       if (user != null) {
         final userAcc = UserModel(
-            name: user.displayName!, email: user.email, profilePic: user.photoUrl!, token: '', uid: '');
+          name: user.displayName ?? '',
+          email: user.email,
+          profilePic: user.photoUrl ?? '',
+          token: '',
+          uid: '',
+        );
 
         var response = await _client.post(Uri.parse('$host/api/signup'), body: userAcc.toJson(), headers: {
-          'Content-Type': 'application/Json; charset=UTF-8',
+          'Content-Type': 'application/json; charset=UTF-8',
         });
+        log(jsonDecode(response.body).toString());
 
         switch (response.statusCode) {
           case 200:
-            log(jsonDecode(response.body));
-            final newUser = userAcc.copyWith(uid: jsonDecode(response.body)['users']['_id']);
+            final newUser = userAcc.copyWith(uid: jsonDecode(response.body)['user']['_id']);
             error = ErrorModel(error: null, data: newUser);
             break;
         }
-      } else {
-        log('not found');
       }
     } catch (e) {
+      log(e.toString());
       error = ErrorModel(error: e.toString(), data: null);
     }
     return error;

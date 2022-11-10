@@ -18,10 +18,10 @@ app.use(authRouter);
 const DBurl = process.env.DB_URL;
 
 mongoose.connect(DBurl).then(() => {
- console.log("Connected with mongodb");
+ console.log("yoo beautifully onnected with mongodb");
 });
 
 
 app.listen(PORT, "0.0.0.0", () => {
- console.log(`connected at port ${PORT}`);
+ console.log(`server is up and running at port ${PORT}`);
 });

@@ -29,8 +29,8 @@ class UserModel {
       name: map['name'] as String,
       email: map['email'] as String,
       profilePic: map['profilePic'] as String,
-      token: map['token'] as String,
-      uid: map['_id'] as String,
+      token: map['token'] ?? '',
+      uid: map['_id'] ?? '',
     );
   }
 

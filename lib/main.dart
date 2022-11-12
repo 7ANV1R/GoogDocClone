@@ -4,6 +4,7 @@ import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
 import 'package:googdocc/screens/auth/login_page.dart';
 import 'package:googdocc/screens/homepage/home_page.dart';
+import 'package:googdocc/screens/homepage/loading_page.dart';
 
 void main() {
   runApp(
@@ -22,10 +23,10 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   ErrorModel? errorModel;
-  bool isLoading = false;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => getUserData());
     getUserData();
   }
 
@@ -50,7 +51,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           brightness: Brightness.dark,
         ),
       ),
-      home: user != null ? const HomePage() : const LoginPage(),
+      home: errorModel == null
+          ? const LoadingPage()
+          : user == null
+              ? const LoginPage()
+              : const HomePage(),
     );
   }
 }

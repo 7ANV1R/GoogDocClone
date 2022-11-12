@@ -26,7 +26,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => getUserData());
     getUserData();
   }
 
@@ -51,11 +50,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           brightness: Brightness.dark,
         ),
       ),
-      home: errorModel == null
-          ? const LoadingPage()
-          : user == null
-              ? const LoginPage()
-              : const HomePage(),
+      home: user == null ? const LoginPage() : const HomePage(),
     );
   }
 }

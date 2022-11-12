@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
+import 'package:googdocc/router.dart';
 import 'package:googdocc/screens/auth/login_page.dart';
 import 'package:googdocc/screens/homepage/home_page.dart';
-import 'package:googdocc/screens/homepage/loading_page.dart';
+import 'package:routemaster/routemaster.dart';
 
 void main() {
   runApp(
@@ -39,8 +40,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Goog Docc',
       theme: ThemeData(
@@ -50,7 +50,17 @@ class _MyAppState extends ConsumerState<MyApp> {
           brightness: Brightness.dark,
         ),
       ),
-      home: user == null ? const LoginPage() : const HomePage(),
+      // home: user == null ? const LoginPage() : const HomePage(),
+      routeInformationParser: const RoutemasterParser(),
+      routerDelegate: RoutemasterDelegate(
+        routesBuilder: (context) {
+          final user = ref.watch(userProvider);
+          if (user != null && user.token.isNotEmpty) {
+            return loggedInRoute;
+          }
+          return loggedOutRoute;
+        },
+      ),
     );
   }
 }

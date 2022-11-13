@@ -105,4 +105,9 @@ class AuthRepository {
   // Future<ErrorModel> getUserData() async {
   //   ErrorModel error = ErrorModel(error: 'Some unexpected error occurred.', data: null);
   // }
+
+  void signOut() async {
+    _googleSignIn.signOut();
+    _localStorageRepo.setToken('');
+  }
 }

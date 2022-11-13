@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
 import 'package:googdocc/router.dart';
-import 'package:googdocc/screens/auth/login_page.dart';
-import 'package:googdocc/screens/homepage/home_page.dart';
+
 import 'package:routemaster/routemaster.dart';
 
 void main() {

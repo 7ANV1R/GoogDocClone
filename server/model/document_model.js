@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const docSchema = mongoose.Schema({
-
  uid: {
   type: String,
   required: true,
@@ -13,16 +12,14 @@ const docSchema = mongoose.Schema({
  createdAt: {
   type: String,
   required: true,
-  trim: true
+  trim: true,
  },
  content: {
   type: Array,
   default: [],
- }
-
+ },
 });
 
-const Document = mongoose.model("Document", docSchema)
-
+const Document = mongoose.model("Document", docSchema);
 
 module.exports = Document;

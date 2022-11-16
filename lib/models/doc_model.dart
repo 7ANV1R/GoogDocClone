@@ -27,11 +27,11 @@ class DocModel {
 
   factory DocModel.fromMap(Map<String, dynamic> map) {
     return DocModel(
-      id: map['_id'] as String,
-      uid: map['uid'] as String,
-      title: map['title'] as String,
-      content: List.from((map['content'] as List)),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+      id: map['_id'] ?? '',
+      uid: map['uid'] ?? '',
+      title: map['title'] ?? '',
+      content: List.from((map['content'])),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt'])),
     );
   }
 

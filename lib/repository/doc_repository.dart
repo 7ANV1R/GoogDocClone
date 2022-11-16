@@ -1,10 +1,16 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googdocc/const.dart';
 import 'package:googdocc/models/doc_model.dart';
 import 'package:googdocc/models/error_model.dart';
 import 'package:http/http.dart';
+
+final docRepoProvider = Provider(
+  (ref) => DocRepository(
+    client: Client(),
+  ),
+);
 
 class DocRepository {
   DocRepository({
@@ -26,11 +32,18 @@ class DocRepository {
 
       switch (response.statusCode) {
         case 200:
-          error = ErrorModel(error: null, data: DocModel.fromJson(response.body));
+          error = ErrorModel(
+            error: null,
+            data: DocModel.fromJson(response.body),
+          );
           break;
+        default:
+          error = ErrorModel(
+            error: response.body,
+            data: null,
+          );
       }
     } catch (e) {
-      log(e.toString());
       error = ErrorModel(error: e.toString(), data: null);
     }
     return error;

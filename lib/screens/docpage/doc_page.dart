@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DocPage extends ConsumerStatefulWidget {
-  const DocPage(this.id, {super.key});
+  const DocPage({required this.id, super.key});
   final String id;
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googdocc/repository/auth_repository.dart';
+import 'package:googdocc/screens/docpage/doc_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -17,7 +18,13 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DocPage('id'),
+                  ));
+            },
             icon: const Icon(
               Icons.add,
             ),

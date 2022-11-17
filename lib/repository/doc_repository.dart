@@ -60,12 +60,6 @@ class DocRepository {
 
       switch (response.statusCode) {
         case 200:
-          // final List<DocModel> allDoc = List<DocModel>.from((response.body as List)
-          //     .map(
-          //       (e) => DocModel.fromJson(e as String),
-          //     )
-          //     .toList());
-          // log(allDoc.toString());
           List<DocModel> allDoc = [];
           for (int i = 0; i < jsonDecode(response.body).length; i++) {
             allDoc.add(DocModel.fromJson(jsonEncode(jsonDecode(response.body)[i])));

@@ -35,6 +35,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final name = ref.watch(userProvider)!.name;
+    final String token = ref.watch(userProvider)!.token;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -56,15 +57,17 @@ class HomePage extends ConsumerWidget {
       //fix this
       body: FutureBuilder<ErrorModel>(
         future: ref.watch(docRepoProvider).getAllDoc(
-              ref.watch(userProvider)!.token,
+              token,
             ),
         builder: (context, snapshot) {
-          List<DocModel> allDoc = snapshot.data!.data;
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
+          if (snapshot.hasError) {
+            final error = snapshot.error;
+            return Center(
+              child: Text(error.toString()),
             );
-          } else {
+          }
+          if (snapshot.hasData) {
+            List<DocModel> allDoc = snapshot.data!.data;
             return ListView.builder(
               itemCount: allDoc.length,
               itemBuilder: (context, index) {
@@ -73,6 +76,10 @@ class HomePage extends ConsumerWidget {
                   child: Text(doc.id),
                 );
               },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
         },

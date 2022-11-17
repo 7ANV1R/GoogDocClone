@@ -4,6 +4,7 @@ import 'package:googdocc/models/doc_model.dart';
 import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
 import 'package:googdocc/repository/doc_repository.dart';
+import 'package:intl/intl.dart';
 import 'package:routemaster/routemaster.dart';
 
 class HomePage extends ConsumerWidget {
@@ -55,34 +56,89 @@ class HomePage extends ConsumerWidget {
         ],
       ),
       //fix this
-      body: FutureBuilder<ErrorModel>(
-        future: ref.watch(docRepoProvider).getAllDoc(
-              token,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Recent documents',
+              style: TextStyle(fontSize: 22),
             ),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            final error = snapshot.error;
-            return Center(
-              child: Text(error.toString()),
-            );
-          }
-          if (snapshot.hasData) {
-            List<DocModel> allDoc = snapshot.data!.data;
-            return ListView.builder(
-              itemCount: allDoc.length,
-              itemBuilder: (context, index) {
-                DocModel doc = snapshot.data!.data[index];
-                return Card(
-                  child: Text(doc.title),
-                );
+            const SizedBox(
+              height: 10,
+            ),
+            FutureBuilder<ErrorModel>(
+              future: ref.watch(docRepoProvider).getAllDoc(
+                    token,
+                  ),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  final error = snapshot.error;
+                  return Center(
+                    child: Text(error.toString()),
+                  );
+                }
+                if (snapshot.hasData) {
+                  List<DocModel> allDoc = snapshot.data!.data;
+                  return SizedBox(
+                    width: 300,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: allDoc.length,
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 10,
+                      ),
+                      itemBuilder: (context, index) {
+                        DocModel doc = snapshot.data!.data[index];
+                        return Container(
+                          padding: const EdgeInsets.all(
+                            16,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                doc.title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    DateFormat(
+                                      'MMM dd, yyyy',
+                                    ).format(doc.createdAt),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.more_vert),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
               },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+            ),
+          ],
+        ),
       ),
     );
   }

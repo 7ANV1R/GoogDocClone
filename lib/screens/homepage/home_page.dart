@@ -73,7 +73,7 @@ class HomePage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 DocModel doc = snapshot.data!.data[index];
                 return Card(
-                  child: Text(doc.id),
+                  child: Text(doc.title),
                 );
               },
             );

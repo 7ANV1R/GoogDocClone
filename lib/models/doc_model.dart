@@ -31,7 +31,7 @@ class DocModel {
       uid: map['uid'] ?? '',
       title: map['title'] ?? '',
       content: List.from((map['content'])),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt'])),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
     );
   }
 

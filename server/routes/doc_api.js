@@ -9,7 +9,7 @@ docRouter.post("/doc/create", auth, async (req, res) => {
   const { createdAt } = req.body;
   let doc = new Document({
    uid: req.user,
-   title: 'Untitled Document',
+   title: "Untitled Document",
    createdAt,
   });
 
@@ -21,5 +21,16 @@ docRouter.post("/doc/create", auth, async (req, res) => {
  }
 });
 
+docRouter.get("/doc/u/all", auth, async (req, res) => {
+ try {
+  let doc = await Document.find({ uid: req.user })
+
+  res.json(doc);
+
+ } catch (error) {
+  res.status(500).send({ msg: error });
+  console.log(error);
+ }
+});
 
 module.exports = docRouter;

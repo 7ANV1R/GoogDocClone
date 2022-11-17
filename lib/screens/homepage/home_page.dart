@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:googdocc/models/doc_model.dart';
+import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
 import 'package:googdocc/repository/doc_repository.dart';
 import 'package:routemaster/routemaster.dart';
@@ -32,7 +34,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final name = ref.watch(userProvider)!.name;
+    // final name = ref.watch(userProvider)!.name;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -51,8 +53,29 @@ class HomePage extends ConsumerWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Text('Welcome $name'),
+      //fix this
+      body: FutureBuilder<ErrorModel>(
+        future: ref.watch(docRepoProvider).getAllDoc(
+              ref.watch(userProvider)!.token,
+            ),
+        builder: (context, snapshot) {
+          List<DocModel> allDoc = snapshot.data!.data;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: allDoc.length,
+              itemBuilder: (context, index) {
+                DocModel doc = snapshot.data!.data[index];
+                return Card(
+                  child: Text(doc.id),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

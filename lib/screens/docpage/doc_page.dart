@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DocPage extends ConsumerStatefulWidget {
@@ -11,6 +12,7 @@ class DocPage extends ConsumerStatefulWidget {
 
 class _DocPageState extends ConsumerState<DocPage> {
   TextEditingController titleController = TextEditingController(text: 'Untitled Document');
+  final quill.QuillController _controller = quill.QuillController.basic();
 
   @override
   void dispose() {
@@ -20,6 +22,7 @@ class _DocPageState extends ConsumerState<DocPage> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -60,7 +63,32 @@ class _DocPageState extends ConsumerState<DocPage> {
         ],
       ),
       body: Center(
-        child: Text('Doc ${widget.id}'),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 16,
+            ),
+            quill.QuillToolbar.basic(controller: _controller),
+            const SizedBox(
+              height: 16,
+            ),
+            Expanded(
+              child: SizedBox(
+                width: size.width * 0.7,
+                child: Card(
+                  elevation: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: quill.QuillEditor.basic(
+                      controller: _controller,
+                      readOnly: false, // true for view only mode
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -33,6 +33,10 @@ class HomePage extends ConsumerWidget {
     }
   }
 
+  void navigateToDocument(BuildContext context, String documentId) {
+    Routemaster.of(context).push('/document/$documentId');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final name = ref.watch(userProvider)!.name;
@@ -81,17 +85,17 @@ class HomePage extends ConsumerWidget {
                 }
                 if (snapshot.hasData) {
                   List<DocModel> allDoc = snapshot.data!.data;
-                  return SizedBox(
-                    width: 300,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: allDoc.length,
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 10,
-                      ),
-                      itemBuilder: (context, index) {
-                        DocModel doc = snapshot.data!.data[index];
-                        return Container(
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: allDoc.length,
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 10,
+                    ),
+                    itemBuilder: (context, index) {
+                      DocModel doc = snapshot.data!.data[index];
+                      return InkWell(
+                        onTap: () => navigateToDocument(context, doc.id),
+                        child: Container(
                           padding: const EdgeInsets.all(
                             16,
                           ),
@@ -126,9 +130,9 @@ class HomePage extends ConsumerWidget {
                               )
                             ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   );
                 } else {
                   return const Center(

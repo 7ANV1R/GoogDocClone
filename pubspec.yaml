@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^2.0.15
   routemaster: ^1.0.1
   intl: ^0.17.0
+  flutter_quill: ^6.1.6
 
 dev_dependencies:
   flutter_test:

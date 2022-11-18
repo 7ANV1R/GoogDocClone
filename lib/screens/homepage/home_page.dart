@@ -33,8 +33,8 @@ class HomePage extends ConsumerWidget {
     }
   }
 
-  void navigateToDocument(BuildContext context, String documentId) {
-    Routemaster.of(context).push('/document/$documentId');
+  void navigateToDocument(BuildContext context, String documentId, String documentTitle) {
+    Routemaster.of(context).push('/document/$documentId', queryParameters: {'title': documentTitle});
   }
 
   @override
@@ -94,7 +94,11 @@ class HomePage extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       DocModel doc = snapshot.data!.data[index];
                       return InkWell(
-                        onTap: () => navigateToDocument(context, doc.id),
+                        onTap: () => navigateToDocument(
+                          context,
+                          doc.id,
+                          doc.title,
+                        ),
                         child: Container(
                           padding: const EdgeInsets.all(
                             16,

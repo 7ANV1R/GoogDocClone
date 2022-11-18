@@ -1,23 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:googdocc/models/doc_model.dart';
+import 'package:googdocc/models/error_model.dart';
+import 'package:googdocc/repository/auth_repository.dart';
+import 'package:googdocc/repository/doc_repository.dart';
 
 class DocPage extends ConsumerStatefulWidget {
-  const DocPage({required this.id, super.key});
+  const DocPage({required this.title, required this.id, super.key});
   final String id;
+  final String title;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DocPageState();
 }
 
 class _DocPageState extends ConsumerState<DocPage> {
-  TextEditingController titleController = TextEditingController(text: 'Untitled Document');
+  late TextEditingController titleController;
   final quill.QuillController _controller = quill.QuillController.basic();
+  ErrorModel? errorModel;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.title);
+    fetchDocData();
+  }
 
   @override
   void dispose() {
     super.dispose();
     titleController.dispose();
+  }
+
+  fetchDocData() async {
+    errorModel = await ref.read(docRepoProvider).getDocByID(ref.read(userProvider)!.token, widget.id);
+    if (errorModel!.data != null) {
+      setState(() {
+        titleController.text = (errorModel!.data as DocModel).title;
+      });
+    }
+  }
+
+  void updateTitle(String title) {
+    ref.read(docRepoProvider).updateTitle(token: ref.read(userProvider)!.token, id: widget.id, title: title);
   }
 
   @override
@@ -45,6 +71,7 @@ class _DocPageState extends ConsumerState<DocPage> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(left: 10),
               ),
+              onSubmitted: (value) => updateTitle(titleController.text),
             ))
           ],
         ),

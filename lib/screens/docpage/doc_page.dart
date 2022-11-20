@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,26 +7,40 @@ import 'package:googdocc/models/doc_model.dart';
 import 'package:googdocc/models/error_model.dart';
 import 'package:googdocc/repository/auth_repository.dart';
 import 'package:googdocc/repository/doc_repository.dart';
+import 'package:googdocc/repository/socket_repository.dart';
 
 class DocPage extends ConsumerStatefulWidget {
-  const DocPage({required this.title, required this.id, super.key});
+  const DocPage({required this.id, super.key});
   final String id;
-  final String title;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DocPageState();
 }
 
 class _DocPageState extends ConsumerState<DocPage> {
-  late TextEditingController titleController;
-  final quill.QuillController _controller = quill.QuillController.basic();
+  TextEditingController titleController = TextEditingController(text: 'Untitled Doc');
+  quill.QuillController? _controller;
   ErrorModel? errorModel;
+  SocketRepository socketRepository = SocketRepository();
 
   @override
   void initState() {
     super.initState();
-    titleController = TextEditingController(text: widget.title);
+
+    socketRepository.joinRoom(widget.id);
     fetchDocData();
+    socketRepository.docChangeListener((data) {
+      _controller?.compose(quill.Delta.fromJson(data['delta']),
+          _controller?.selection ?? const TextSelection.collapsed(offset: 0), quill.ChangeSource.REMOTE);
+    });
+    // titleController = TextEditingController(text: widget.title);
+
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      socketRepository.autoSave(<String, dynamic>{
+        'delta': _controller!.document.toDelta(),
+        'room': widget.id,
+      });
+    });
   }
 
   @override
@@ -36,10 +52,27 @@ class _DocPageState extends ConsumerState<DocPage> {
   fetchDocData() async {
     errorModel = await ref.read(docRepoProvider).getDocByID(ref.read(userProvider)!.token, widget.id);
     if (errorModel!.data != null) {
-      setState(() {
-        titleController.text = (errorModel!.data as DocModel).title;
-      });
+      titleController.text = (errorModel!.data as DocModel).title;
+
+      _controller = quill.QuillController(
+        document: errorModel!.data.content.isEmpty
+            ? quill.Document()
+            : quill.Document.fromDelta(
+                quill.Delta.fromJson(errorModel!.data.content),
+              ),
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+      setState(() {});
     }
+    _controller!.document.changes.listen((event) {
+      if (event.item3 == quill.ChangeSource.LOCAL) {
+        Map<String, dynamic> map = {
+          'delta': event.item2,
+          'room': widget.id,
+        };
+        socketRepository.typing(map);
+      }
+    });
   }
 
   void updateTitle(String title) {
@@ -49,6 +82,13 @@ class _DocPageState extends ConsumerState<DocPage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    if (_controller == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator.adaptive(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -95,7 +135,7 @@ class _DocPageState extends ConsumerState<DocPage> {
             const SizedBox(
               height: 16,
             ),
-            quill.QuillToolbar.basic(controller: _controller),
+            quill.QuillToolbar.basic(controller: _controller!),
             const SizedBox(
               height: 16,
             ),
@@ -107,7 +147,7 @@ class _DocPageState extends ConsumerState<DocPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: quill.QuillEditor.basic(
-                      controller: _controller,
+                      controller: _controller!,
                       readOnly: false, // true for view only mode
                     ),
                   ),

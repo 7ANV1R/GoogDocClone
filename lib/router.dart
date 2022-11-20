@@ -25,7 +25,6 @@ final loggedInRoute = RouteMap(
       '/document/:id': (route) => MaterialPage(
             child: DocPage(
               id: route.pathParameters['id'] ?? '',
-              title: route.pathParameters['title'] ?? '',
             ),
           ),
     });

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googdocc/const.dart';
@@ -64,7 +63,7 @@ class DocRepository {
           for (int i = 0; i < jsonDecode(response.body).length; i++) {
             allDoc.add(DocModel.fromJson(jsonEncode(jsonDecode(response.body)[i])));
           }
-          log('all doc $allDoc');
+
           error = ErrorModel(
             error: null,
             data: allDoc,

@@ -51,7 +51,6 @@ class AuthRepository {
         var response = await _client.post(Uri.parse('$host/api/signup'), body: userAcc.toJson(), headers: {
           'Content-Type': 'application/json; charset=UTF-8',
         });
-        log(jsonDecode(response.body).toString());
 
         switch (response.statusCode) {
           case 200:

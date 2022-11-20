@@ -33,8 +33,10 @@ class HomePage extends ConsumerWidget {
     }
   }
 
-  void navigateToDocument(BuildContext context, String documentId, String documentTitle) {
-    Routemaster.of(context).push('/document/$documentId', queryParameters: {'title': documentTitle});
+  void navigateToDocument(BuildContext context, String documentId) {
+    Routemaster.of(context).push(
+      '/document/$documentId',
+    );
   }
 
   @override
@@ -97,7 +99,6 @@ class HomePage extends ConsumerWidget {
                         onTap: () => navigateToDocument(
                           context,
                           doc.id,
-                          doc.title,
                         ),
                         child: Container(
                           padding: const EdgeInsets.all(
